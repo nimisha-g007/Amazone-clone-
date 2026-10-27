@@ -1,0 +1,235 @@
+
+{% extends 'store/base.html' %}
+
+{% block title %}ShopZone | Online Shopping{% endblock %}
+
+{% block content %}
+
+<style>
+    .hero-banner {
+        min-height: 260px;
+        padding: 35px;
+        border-radius: 8px;
+        background: linear-gradient(110deg, #ffd8a8, #ffad45, #fce4b4);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        overflow: hidden;
+    }
+
+    .hero-banner h1 { font-size: 36px; margin: 0 0 15px; }
+    .hero-banner p { font-size: 18px; }
+    .hero-emoji { font-size: 100px; }
+
+    .promo-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 12px;
+        margin: 16px 0 25px;
+    }
+
+    .promo-card {
+        min-height: 270px;
+        padding: 16px;
+        border-radius: 8px;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background: linear-gradient(145deg, #ef7d16, #bd3428);
+    }
+
+    .promo-card:nth-child(2) {
+        background: linear-gradient(145deg, #9d174d, #e64b76);
+    }
+
+    .promo-card:nth-child(3) {
+        background: linear-gradient(145deg, #087f8c, #16a085);
+    }
+
+    .promo-card:nth-child(4) {
+        background: linear-gradient(145deg, #5533a5, #a65cda);
+    }
+
+    .promo-card:nth-child(5) {
+        background: linear-gradient(145deg, #126e82, #24a7ad);
+    }
+
+    .promo-card h2 { font-size: 22px; margin: 0; }
+    .promo-card .promo-emoji { text-align: center; font-size: 60px; }
+    .promo-card a {
+        background: white;
+        color: #111;
+        text-align: center;
+        padding: 9px;
+        border-radius: 4px;
+        font-weight: bold;
+    }
+
+    .deal-section {
+        background: white;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 6px;
+    }
+
+    .deal-section h2 { margin-top: 0; }
+
+    .products {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .product-card {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 16px;
+        min-width: 0;
+    }
+
+    .product-image {
+        height: 190px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f7f8f8;
+        margin-bottom: 12px;
+        overflow: hidden;
+    }
+
+    .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .product-card h3 { font-size: 17px; }
+    .product-price { font-size: 23px; font-weight: bold; }
+    .product-card button {
+        width: 100%;
+        border: none;
+        background: #ffd814;
+        border-radius: 20px;
+        padding: 10px;
+        cursor: pointer;
+        margin-top: 8px;
+    }
+
+    .product-card button:hover { background: #f7ca00; }
+    .details-link { display: block; margin-top: 12px; color: #007185; }
+    .stock-label { color: #067d62; }
+
+    @media (max-width: 900px) {
+        .promo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .promo-card:last-child { display: none; }
+    }
+
+    @media (max-width: 600px) {
+        .hero-banner { padding: 22px; min-height: 200px; }
+        .hero-banner h1 { font-size: 27px; }
+        .hero-emoji { font-size: 55px; }
+        .promo-grid { grid-template-columns: 1fr 1fr; }
+        .promo-card { min-height: 200px; padding: 12px; }
+        .promo-card h2 { font-size: 18px; }
+        .products { grid-template-columns: 1fr; }
+    }
+</style>
+
+<section class="hero-banner">
+    <div>
+        <h1>Great deals. Great finds.</h1>
+        <p>Discover electronics, fashion, books and more.</p>
+        <p><strong>Find something you'll love today!</strong></p>
+    </div>
+    <div class="hero-emoji">🛍️</div>
+</section>
+
+<section class="promo-grid">
+    <div class="promo-card">
+        <h2>Upgrade your style</h2>
+        <div class="promo-emoji">👟</div>
+        <a href="{% url 'home' %}?q=shoes">Shop Now</a>
+    </div>
+
+    <div class="promo-card">
+        <h2>Everyday essentials</h2>
+        <div class="promo-emoji">🎒</div>
+        <a href="{% url 'home' %}?q=accessories">Explore Deals</a>
+    </div>
+
+    <div class="promo-card">
+        <h2>Beauty favourites</h2>
+        <div class="promo-emoji">🧴</div>
+        <a href="{% url 'home' %}?q=beauty">Shop Beauty</a>
+    </div>
+
+    <div class="promo-card">
+        <h2>Tech made easy</h2>
+        <div class="promo-emoji">💻</div>
+        <a href="{% url 'home' %}?q=electronics">Explore Tech</a>
+    </div>
+
+    <div class="promo-card">
+        <h2>Refresh your home</h2>
+        <div class="promo-emoji">🪴</div>
+        <a href="{% url 'home' %}?q=home">Shop Home</a>
+    </div>
+</section>
+
+<section class="deal-section">
+    <h2>
+        {% if query %}
+            Search results for "{{ query }}"
+        {% else %}
+            Trending deals
+        {% endif %}
+    </h2>
+
+    <div class="products">
+        {% for product in products %}
+            <article class="product-card">
+                <a href="{% url 'product_detail' product.id %}">
+                    <div class="product-image">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <span style="font-size:65px;">🛍️</span>
+                        {% endif %}
+                    </div>
+                    <h3>{{ product.name }}</h3>
+                </a>
+
+                <p class="product-price">₹{{ product.price }}</p>
+                <p class="stock-label">
+                    {% if product.stock > 0 %}
+                        In stock
+                    {% else %}
+                        Out of stock
+                    {% endif %}
+                </p>
+
+                {% if product.stock > 0 %}
+                    <form method="post" action="{% url 'add_to_cart' product.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Add to Cart</button>
+                    </form>
+                {% endif %}
+
+                <a class="details-link"
+                   href="{% url 'product_detail' product.id %}">
+                    See product details
+                </a>
+            </article>
+        {% empty %}
+            <p>
+                No products available yet. Open the admin panel to add products.
+            </p>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}
+

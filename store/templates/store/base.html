@@ -1,0 +1,344 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ShopZone{% endblock %}</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #e3e6e6;
+            color: #111;
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        .top-header {
+            background: #131921;
+            color: white;
+            min-height: 68px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 10px 18px;
+        }
+
+        .logo {
+            color: white;
+            font-size: 27px;
+            font-weight: bold;
+            white-space: nowrap;
+            padding: 8px;
+        }
+
+        .logo span { color: #ff9900; }
+
+        .delivery {
+            min-width: 125px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .delivery strong { font-size: 14px; }
+
+        .search-form {
+            flex: 1;
+            display: flex;
+            height: 42px;
+            min-width: 100px;
+        }
+
+        .search-form input {
+            width: 100%;
+            min-width: 0;
+            border: none;
+            padding: 10px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .search-form button {
+            border: none;
+            background: #febd69;
+            padding: 0 18px;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .header-link {
+            color: white;
+            font-size: 12px;
+            white-space: nowrap;
+            padding: 5px;
+        }
+
+        .header-link strong { font-size: 14px; }
+
+        .cart-link { font-size: 17px; font-weight: bold; }
+
+        .nav-bar {
+            background: #232f3e;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 12px 20px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .all-button {
+            color: white;
+            background: transparent;
+            border: 1px solid transparent;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .all-button:hover { border-color: white; }
+
+        .festival {
+            margin-left: auto;
+            color: #ffd27a;
+            font-weight: bold;
+        }
+
+        main { min-height: 570px; }
+
+        .page-content {
+            max-width: 1500px;
+            margin: auto;
+            padding: 16px;
+        }
+
+        footer {
+            background: #131921;
+            color: white;
+            text-align: center;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        /* Sidebar */
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .65);
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity .2s;
+        }
+
+        .sidebar-overlay.open {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: min(365px, 85vw);
+            height: 100vh;
+            background: white;
+            overflow-y: auto;
+            transform: translateX(-100%);
+            transition: transform .25s;
+            z-index: 1001;
+        }
+
+        .sidebar.open { transform: translateX(0); }
+
+        .sidebar-header {
+            background: #232f3e;
+            color: white;
+            padding: 17px 22px;
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+        .sidebar-header a { color: white; }
+
+        .close-sidebar {
+            position: fixed;
+            top: 8px;
+            left: min(375px, calc(85vw + 10px));
+            color: white;
+            background: transparent;
+            border: none;
+            font-size: 35px;
+            cursor: pointer;
+            z-index: 1002;
+            display: none;
+        }
+
+        .close-sidebar.open { display: block; }
+
+        .sidebar-section {
+            padding: 18px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .sidebar-section h3 {
+            font-size: 18px;
+            margin: 0 22px 12px;
+        }
+
+        .sidebar-section a {
+            display: block;
+            padding: 12px 22px;
+            font-size: 14px;
+        }
+
+        .sidebar-section a:hover { background: #eaeded; }
+
+        @media (max-width: 900px) {
+            .delivery { display: none; }
+            .header-link.account { display: none; }
+            .nav-bar { gap: 14px; }
+            .festival { display: none; }
+        }
+
+        @media (max-width: 560px) {
+            .top-header { gap: 7px; padding: 8px; flex-wrap: wrap; }
+            .logo { font-size: 22px; padding: 3px; }
+            .search-form { order: 2; flex-basis: 100%; }
+            .header-link.orders { display: none; }
+            .nav-bar { padding: 10px; }
+            .page-content { padding: 10px; }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="top-header">
+    <a href="{% url 'home' %}" class="logo">Ama<span>Zone</span></a>
+
+    <div class="delivery">
+        <div>⌖ Delivering to you</div>
+        <strong>Update location</strong>
+    </div>
+
+    <form class="search-form" method="get" action="{% url 'home' %}">
+        <input
+            type="text"
+            name="q"
+            placeholder="Search ShopZone"
+            value="{{ query|default:'' }}"
+        >
+        <button type="submit" aria-label="Search">⌕</button>
+    </form>
+
+    <a class="header-link account" href="/admin/">
+        Hello, sign in<br>
+        <strong>Account &amp; Lists</strong>
+    </a>
+
+    <a class="header-link orders" href="/admin/">
+        Returns &amp;<br><strong>Orders</strong>
+    </a>
+
+    <a class="cart-link" href="{% url 'cart' %}">🛒 Cart</a>
+</header>
+
+<nav class="nav-bar">
+    <button class="all-button" id="openSidebar">☰ All</button>
+    <a href="{% url 'home' %}">Fresh</a>
+    <a href="{% url 'home' %}?q=deals">Today's Deals</a>
+    <a href="{% url 'home' %}?q=electronics">Electronics</a>
+    <a href="{% url 'home' %}?q=fashion">Fashion</a>
+    <a href="{% url 'home' %}?q=books">Books</a>
+    <a href="{% url 'home' %}?q=computers">Computers</a>
+    <span class="festival">✦ Great Shopping Festival</span>
+</nav>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <a href="/admin/">👤 Hello, sign in</a>
+    </div>
+
+    <div class="sidebar-section">
+        <h3>Trending</h3>
+        <a href="{% url 'home' %}?q=bestseller">Bestsellers</a>
+        <a href="{% url 'home' %}?q=new">New Releases</a>
+        <a href="{% url 'home' %}?q=deals">Today's Deals</a>
+    </div>
+
+    <div class="sidebar-section">
+        <h3>Digital Content and Devices</h3>
+        <a href="{% url 'home' %}?q=electronics">Electronics　›</a>
+        <a href="{% url 'home' %}?q=mobile">Mobiles　›</a>
+        <a href="{% url 'home' %}?q=computer">Computers　›</a>
+        <a href="{% url 'home' %}?q=books">Books　›</a>
+    </div>
+
+    <div class="sidebar-section">
+        <h3>Shop by Category</h3>
+        <a href="{% url 'home' %}?q=fashion">Men's Fashion　›</a>
+        <a href="{% url 'home' %}?q=fashion">Women's Fashion　›</a>
+        <a href="{% url 'home' %}?q=home">Home &amp; Kitchen　›</a>
+        <a href="{% url 'home' %}?q=beauty">Beauty　›</a>
+        <a href="{% url 'home' %}?q=accessories">Accessories　›</a>
+    </div>
+
+    <div class="sidebar-section">
+        <h3>Help &amp; Settings</h3>
+        <a href="/admin/">Your Account</a>
+        <a href="{% url 'cart' %}">Your Cart</a>
+        <a href="/admin/">Manage Products (Admin)</a>
+    </div>
+</aside>
+
+<button class="close-sidebar" id="closeSidebar" aria-label="Close menu">×</button>
+
+<main>
+    <div class="page-content">
+        {% block content %}{% endblock %}
+    </div>
+</main>
+
+<footer>ShopZone — Your online shopping destination</footer>
+
+<script>
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("sidebarOverlay");
+    const openButton = document.getElementById("openSidebar");
+    const closeButton = document.getElementById("closeSidebar");
+
+    function openMenu() {
+        sidebar.classList.add("open");
+        overlay.classList.add("open");
+        closeButton.classList.add("open");
+        document.body.style.overflow = "hidden";
+    }
+
+    function closeMenu() {
+        sidebar.classList.remove("open");
+        overlay.classList.remove("open");
+        closeButton.classList.remove("open");
+        document.body.style.overflow = "";
+    }
+
+    openButton.addEventListener("click", openMenu);
+    closeButton.addEventListener("click", closeMenu);
+    overlay.addEventListener("click", closeMenu);
+
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Escape") closeMenu();
+    });
+</script>
+
+</body>
+</html>
